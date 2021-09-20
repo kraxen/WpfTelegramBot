@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Telegram.Bot;
+using WpfTelegramBotExceptionLibrary;
 
 namespace WpfTelegramBot
 {
@@ -30,27 +31,39 @@ namespace WpfTelegramBot
         {
             InitializeComponent();
 
-            //bot = new TelegramBot(this, new ObservableCollection<Dialog>());
-            bot = new TelegramBot(this);
+            //bot = new TelegramBot(this, new ObservableCollection<Dialog>());  // Создание нового экзепляра бота
+            bot = new TelegramBot(this);                                        // Создание бота по сохранененой истории сообщений
 
             lvDialigues.ItemsSource = bot.dialogues;
         }
-
-        public void button_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Кнопка отправки сообщения
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="a"></param>
+        public void button_Click(object sender, RoutedEventArgs a)
         {
             try
             {
+                if (lvDialigues.SelectedItem == null) throw new NotSelectedException("Диалог");
                 bot.SendMessage(TelegramBot.thisDialog.Id, tbSendMessage.Text);
                 tbSendMessage.Text = "";
             }
-            catch { }
+            catch(Exception e) 
+            {
+                MessageBox.Show($"{e.Message}\n\n{e.GetType()}","Произошла ошибка",MessageBoxButton.OK,MessageBoxImage.Error);
+            }
             
         }
-
+        /// <summary>
+        /// Действие при выделении диалога
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lvDialigues_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             TelegramBot.thisDialog = lvDialigues.SelectedItem as Dialog;
-            lvMesseges.ItemsSource = bot.dialogues.First(d => d.Id == TelegramBot.thisDialog.Id).Messages;
+            lvMesseges.ItemsSource = TelegramBot.thisDialog.Messages;
         }
     }
 }

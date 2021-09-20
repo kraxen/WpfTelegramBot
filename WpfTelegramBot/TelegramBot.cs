@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Telegram.Bot;
 using static WpfTelegramBot.AsyncMethods;
 
@@ -31,15 +32,21 @@ namespace WpfTelegramBot
         /// <param name="dialogues"></param>
         [Obsolete]
         public TelegramBot(MainWindow w, ObservableCollection<Dialog> dialogues)
-        { 
-            token = File.ReadAllText($@"token.txt");
-            this.dialogues = dialogues;
-            this.w = w;
-            bot = new TelegramBotClient(token);
-
-
-            bot.OnMessage += Bot_OnMessage;
-            bot.StartReceiving();
+        {
+            try
+            {
+                token = File.ReadAllText($@"token.txt");
+                this.dialogues = dialogues;
+                this.w = w;
+                bot = new TelegramBotClient(token);
+                bot.OnMessage += Bot_OnMessage;
+                bot.StartReceiving();
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show($"{e.Message}\n\n{ e.GetType()}");
+            }
+            
         }
         /// <summary>
         /// Создание телеграм бота на основе предыдущих сообщений
@@ -156,12 +163,24 @@ namespace WpfTelegramBot
                 if (filePath != "") SendDocumentAsync(e, bot, filePath, fileName[1]);
             }
         }
-
+        /// <summary>
+        /// Метод отправки сообщений
+        /// </summary>
+        /// <param name="userId">Id диалога, кому отправлять сообщение</param>
+        /// <param name="messageText">Текст сообщения</param>
         public async void SendMessage(long userId, string messageText)
         {
-            await this.bot.SendTextMessageAsync(userId, messageText);
-            thisDialog.Messages.Add(new TelegramMessage(-1, "BotAdmin", messageText, DateTime.Now.ToLongTimeString()));
-            SaveAsFile.SaveToJson(dialogues);
+            try
+            {
+                await this.bot.SendTextMessageAsync(userId, messageText);
+                thisDialog.Messages.Add(new TelegramMessage(-1, "BotAdmin", messageText, DateTime.Now.ToLongTimeString()));
+                SaveAsFile.SaveToJson(dialogues);
+            }
+            catch (System.Net.Http.HttpRequestException e)
+            {
+                MessageBox.Show($"{e.Message}\n{e.GetType()}, бот не был создан на основе токена");
+            }
+            
         }
     }
 

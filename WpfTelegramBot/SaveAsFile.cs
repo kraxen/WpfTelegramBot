@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.IO;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace WpfTelegramBot
 {
@@ -30,27 +31,32 @@ namespace WpfTelegramBot
         /// <param name="dialogues"></param>
         public static async void GetObservableCollectionDialogIntoFile(object o)
         {
-            TelegramBot bot = o as TelegramBot;
-            string path = "dialogues.json";
-            if (File.Exists(path))
+            try
             {
-                using (StreamReader sr = File.OpenText(path))
+                TelegramBot bot = o as TelegramBot;
+                string path = "dialogues.json";
+                if (File.Exists(path))
                 {
-                    string json = "";
-                    json = await sr.ReadToEndAsync();
-                    var dialogsTemp = JsonConvert.DeserializeObject<ObservableCollection<Dialog>>(json);
-                    foreach(var d in dialogsTemp)
+                    using (StreamReader sr = File.OpenText(path))
                     {
-                        bot.dialogues.Add(d);
+                        string json = "";
+                        json = await sr.ReadToEndAsync();
+                        var dialogsTemp = JsonConvert.DeserializeObject<ObservableCollection<Dialog>>(json);
+                        foreach (var d in dialogsTemp)
+                        {
+                            bot?.dialogues?.Add(d);
+                        }
                     }
                 }
+                else
+                {
+                    bot.dialogues = new ObservableCollection<Dialog>();
+                }
             }
-            else
+            catch(Exception e)
             {
-                bot.dialogues = new ObservableCollection<Dialog>();
+                Debug.WriteLine($"Произошла ошибка {e.GetType()}\n{e.Message}\nТелеграм бот не создан");
             }
-            
-            
         }
     }
 }

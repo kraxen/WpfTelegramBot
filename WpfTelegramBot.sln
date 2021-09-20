@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTelegramBot", "WpfTelegramBot\WpfTelegramBot.csproj", "{4E378E05-924A-400C-9904-C88499E75E6C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTelegramBotExceptionLibrary", "WpfTelegramBotExceptionLibrary\WpfTelegramBotExceptionLibrary.csproj", "{D9657AE8-F1CC-4F02-A8E9-7974AB1F9532}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4E378E05-924A-400C-9904-C88499E75E6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E378E05-924A-400C-9904-C88499E75E6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E378E05-924A-400C-9904-C88499E75E6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9657AE8-F1CC-4F02-A8E9-7974AB1F9532}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9657AE8-F1CC-4F02-A8E9-7974AB1F9532}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9657AE8-F1CC-4F02-A8E9-7974AB1F9532}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9657AE8-F1CC-4F02-A8E9-7974AB1F9532}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

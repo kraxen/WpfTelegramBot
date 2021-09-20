@@ -113,5 +113,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WpfTelegramBotExceptionLibrary\WpfTelegramBotExceptionLibrary.csproj">
+      <Project>{d9657ae8-f1cc-4f02-a8e9-7974ab1f9532}</Project>
+      <Name>WpfTelegramBotExceptionLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

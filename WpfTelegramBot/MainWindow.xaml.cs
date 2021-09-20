@@ -30,14 +30,27 @@ namespace WpfTelegramBot
         {
             InitializeComponent();
 
+            //bot = new TelegramBot(this, new ObservableCollection<Dialog>());
             bot = new TelegramBot(this);
 
-            listView.ItemsSource = bot.messages;
+            lvDialigues.ItemsSource = bot.dialogues;
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        public void button_Click(object sender, RoutedEventArgs e)
         {
-            bot.SendMessage(Convert.ToInt64(userId.Text), textBox.Text);
+            try
+            {
+                bot.SendMessage(TelegramBot.thisDialog.Id, tbSendMessage.Text);
+                tbSendMessage.Text = "";
+            }
+            catch { }
+            
+        }
+
+        private void lvDialigues_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            TelegramBot.thisDialog = lvDialigues.SelectedItem as Dialog;
+            lvMesseges.ItemsSource = bot.dialogues.First(d => d.Id == TelegramBot.thisDialog.Id).Messages;
         }
     }
 }

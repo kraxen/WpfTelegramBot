@@ -12,6 +12,9 @@
                             MinHeight="450"
                             MinWidth="800"
                             >
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding button_Click, RelativeSource={RelativeSource Self}}" Modifiers="Control" Key="Enter"></KeyBinding>
+    </Window.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
@@ -21,25 +24,43 @@
             <RowDefinition Height="4*"/>
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
-        <ListBox  x:Name="listView" 
+        <ListBox  x:Name="lvMesseges" 
                   HorizontalAlignment="Stretch" 
                   Margin="10" 
                   VerticalAlignment="Stretch"
                   Grid.Row="0" 
-                  Grid.ColumnSpan="2"
+                  Grid.ColumnSpan="1"
                   >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
                         <TextBlock Text="{Binding StringFormat=Id: {0}, Path=id}" FontSize="8"/>
-                        <TextBlock Text="{Binding StringFormat=Имя пользователя: {0}, Path=userName}" FontSize="16"/>
+                        <TextBlock Text="{Binding Path=userName}" FontSize="16"/>
                         <TextBlock Text="{Binding StringFormat=Сообщение: {0}, Path=messageText}" FontSize="14"/>
-                        <TextBlock Text="{Binding StringFormat=Время отправки: {0}, Path=messageTime}" FontSize="12"/>
+                        <TextBlock Text="{Binding StringFormat=Время отправки: {0}, Path=messageTime}" FontSize="8"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TextBox x:Name="textBox"
+        <ListBox  x:Name="lvDialigues" 
+                  HorizontalAlignment="Stretch" 
+                  Margin="10" 
+                  VerticalAlignment="Stretch"
+                  Grid.Row="0"
+                  Grid.Column="1"
+                  Grid.ColumnSpan="1" 
+                  SelectionChanged="lvDialigues_SelectionChanged"
+                  >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding StringFormat=Id: {0}, Path=Id}" FontSize="8"/>
+                        <TextBlock Text="{Binding Path=UserName}" FontSize="16"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBox x:Name="tbSendMessage"
                  HorizontalAlignment="Stretch"
                  Margin="10 20"
                  Grid.Row="1" 
@@ -53,16 +74,19 @@
                 Content="Отправить" 
                 Grid.Column="1" 
                 HorizontalAlignment="Stretch"
-                Width="100"
-                Margin="50" 
+                Margin="20 20" 
                 Grid.Row="1"
-                VerticalAlignment="Stretch" Click="button_Click"
+                VerticalAlignment="Stretch" 
+                Click="button_Click" FontSize="20"
                 />
+        
         <TextBlock 
             x:Name="userId"
             Text="{Binding ElementName=listView, Path=SelectedItem.id}" 
             Visibility="Collapsed"
             />
+
+        
 
 
     </Grid>

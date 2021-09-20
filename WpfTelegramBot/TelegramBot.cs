@@ -16,24 +16,41 @@ namespace WpfTelegramBot
         private TelegramBotClient bot;
         private string token;
         private MainWindow w;
-        public ObservableCollection<TelegramMessage> messages { get; set; }
+        //public ObservableCollection<TelegramMessage> messages { get; set; }
+        public ObservableCollection<Dialog> dialogues { get; set; }
+        public static Dialog thisDialog;
 
         static string FAQstr = "Данный бот представляет из себя подобие облачного хранилища.\n " +
             "Вы можете отправлять файлы и они будут загружены на сервер.\n" +
             "Командой: \"Скаченные файлы\" можно получить список сохраненных файлов\n" +
             "Командой \"Скачать файл: имя_файла\"  необходимого файла можно скачать файл";
-
+        /// <summary>
+        /// Создание телеграм бота на основе окна и коллекции сообщений
+        /// </summary>
+        /// <param name="w"></param>
+        /// <param name="dialogues"></param>
         [Obsolete]
-        public TelegramBot(MainWindow w)
+        public TelegramBot(MainWindow w, ObservableCollection<Dialog> dialogues)
         { 
             token = File.ReadAllText($@"token.txt");
-            messages = new ObservableCollection<TelegramMessage>();
+            this.dialogues = dialogues;
             this.w = w;
             bot = new TelegramBotClient(token);
 
-            bot.OnMessage += Bot_OnMessage;
 
+            bot.OnMessage += Bot_OnMessage;
             bot.StartReceiving();
+        }
+        /// <summary>
+        /// Создание телеграм бота на основе предыдущих сообщений
+        /// </summary>
+        /// <param name="w"></param>
+        [Obsolete]
+        public TelegramBot(MainWindow w)
+            :this(w, new ObservableCollection<Dialog>())
+        {
+            SaveAsFile.GetObservableCollectionDialogIntoFile(this);
+            w.lvDialigues.Items.Refresh();
         }
 
         [Obsolete]
@@ -43,11 +60,20 @@ namespace WpfTelegramBot
             string date = DateTime.Now.ToLongTimeString();
             long id = e.Message.Chat.Id;
             string name = e.Message.From.Username;
+            if(!this.dialogues.Any(d => d.Id == e.Message.Chat.Id))
+            {
+                thisDialog = new Dialog(e.Message.Chat.Id, e.Message.From.Username);
+                w.Dispatcher.Invoke(() => this.dialogues.Add(thisDialog));
+            }
+            else
+            {
+                thisDialog = this.dialogues.First(d => d.Id == e.Message.Chat.Id);
+            }
 
             if (e.Message.Type == Telegram.Bot.Types.Enums.MessageType.Text)
             {
                 w.Dispatcher.Invoke(() =>
-                messages.Add(new TelegramMessage(id, name, e.Message.Text, date))
+                thisDialog.Messages.Add(new TelegramMessage(id, name, e.Message.Text, date))
                 );
                 DoIfTextMessage(e);
             }
@@ -69,6 +95,7 @@ namespace WpfTelegramBot
             {
                 SaveDocumentMessage(e, bot);
             }
+            SaveAsFile.SaveToJson(dialogues);
         }
         /// <summary>
         /// Метод получения списка сохраненных файлов
@@ -133,6 +160,8 @@ namespace WpfTelegramBot
         public async void SendMessage(long userId, string messageText)
         {
             await this.bot.SendTextMessageAsync(userId, messageText);
+            thisDialog.Messages.Add(new TelegramMessage(-1, "BotAdmin", messageText, DateTime.Now.ToLongTimeString()));
+            SaveAsFile.SaveToJson(dialogues);
         }
     }
 
